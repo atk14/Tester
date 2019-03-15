@@ -1,0 +1,249 @@
+#!/usr/bin/env php
+<?php
+/**
+ * A test runner. Part of ATK14 Framework <http://www.atk14.net/>
+ *
+ * In working directory it searches for tc_*.php files. Every of them loads and runs tests.
+ *
+ *   $ run_unit_tests
+ * 
+ * In file e.g. tc_currency.php it expects TcCurrency class (eventually tc_currency).
+ *
+ * You can specify a list of test files to be executed
+ *
+ *   $ run_unit_tests tc_account tc_bank_transfer
+ *
+ *   eventually with .php suffix
+ *   $ run_unit_tests tc_account.php tc_bank_transfer.php
+ * 
+ * Dangerous tests
+ * ---------------
+ * Sometimes you don't want to execute some test files automatically unless you specify them on command line.
+ * Prefix such files with exclamation mark.
+ *
+ *   $ run_unit_tests
+ *
+ *   $ run_unit_tests \!tc_gangerous_test_case.php
+ *   $ run_unit_tests '!tc_gangerous_test_case.php'
+ *
+ * Automatization in testing
+ * -------------------------
+ *
+ *   $ cd /path/to/test_files/ ; run_unit_tests && echo "TESTS ARE OK" || echo "THERE WERE ERRORS"
+ *
+ */
+error_reporting(255);
+
+if(preg_match("/^4/",phpversion())){
+	echo "Sorry! PHP4 is no more supported\n";
+	exit(1);
+}
+if(preg_match("/^5/",phpversion())){
+	define("PHP5",true);
+	define("PHP7",false);
+}elseif(preg_match("/^7/",phpversion())){
+	define("PHP5",false);
+	define("PHP7",true);
+}else{
+	echo "Sorry! Your version of PHP is not supported\n";
+	exit(1);
+}
+
+$HOME = getenv("HOME"); // "/home/yarri"
+
+// in PHP5.3 there is no $_ENV["PWD"] ??
+isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
+
+isset($argv) || ($argv = array());
+
+$SCRIPT = array_shift($argv);
+$DIR = "";
+$RUN_TESTS_ONLY = array();
+while($_a = array_shift($argv)){
+	if(is_dir($_a)){ $DIR = $_a; continue; }
+	$RUN_TESTS_ONLY[] = $_a;
+}
+if($DIR){
+	$DIR = preg_replace('/([^\/])$/','\1/',$DIR);
+	chdir($DIR);
+}
+
+$exists = false;
+foreach(array(
+		"../vendor/phpunit" => "../autoload.php",
+		"$HOME/.composer/vendor/phpunit" => "../autoload.php",
+		"$HOME/.config/composer/vendor/phpunit" => "../autoload.php",
+		"/usr/share/php/PHPUnit" => "Autoload.php"
+	) as $dir => $autoload) {
+	if(file_exists($dir)) {
+		$exists = true;
+		break;
+	}
+}
+
+if($exists) {
+	// $ composer global require "phpunit/phpunit=4.8.*"
+	require("$dir/$autoload");
+	define('PHPUNIT2',false);
+	define('PHPUNIT',true);
+
+}else{
+
+	define('PHPUNIT2',true);
+	define('PHPUNIT',false);
+
+	set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
+
+	include_once 'PHPUnit2/Framework/TestSuite.php';
+	include_once 'PHPUnit2/Framework/TestCase.php';
+	include_once 'PHPUnit2/TextUI/ResultPrinter.php';
+	include_once 'Benchmark/Timer.php';
+
+	if(!class_exists("PHPUnit2_Framework_TestCase")){
+		echo "***************************************************************\n";
+		echo "*  Missing dependency: class PHPUnit_Framework_TestCase       *\n";
+		echo "*  The following command may help you:                        *\n";
+		echo "*                                                             *\n";
+		echo "*  $ composer global require \"phpunit/phpunit=4.8.*\"          *\n";
+		echo "*                                                             *\n";
+		echo "*  or for the installation of the very old PHPUnit2 execute:  *\n";
+		echo "*                                                             *\n";
+		echo "*  $ sudo pear install --alldeps PHPUnit2                     *\n";
+		echo "*                                                             *\n";
+		echo "***************************************************************\n";
+		exit(1);
+	}
+}
+
+if(PHPUNIT2){
+	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
+}else{
+	eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+}
+
+if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
+
+if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
+	require_once($_f);
+}else{
+	eval("class tc_base extends tc_super_base{ }");
+	eval("class TcBase extends TcSuperBase{ }");
+}
+
+$ALLOWED_TESTS = array();
+$ALLOWED_DANGEROUS_TESTS = array();
+$tests_to_execute = array();
+
+$dir = opendir("./");
+while($file = readdir($dir)){
+	if(in_array($file,array(".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"))){ continue; } // tyto souboryu ignorujeme
+
+	if(preg_match("/^(tc_.*)\\.(inc|php)$/",$file,$matches)){
+		$ALLOWED_TESTS[$file] = $matches[1];
+	}elseif(preg_match("/^!(tc_.*)\\.(inc|php)$/",$file,$matches)){
+		$ALLOWED_DANGEROUS_TESTS[$file] = $matches[1];
+	}
+}
+closedir($dir);
+
+ksort($ALLOWED_TESTS);
+
+foreach($ALLOWED_TESTS as $filename => $classname){	
+	if(sizeof($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
+		continue;
+	}
+	$tests_to_execute[] = $filename;
+}
+
+foreach($ALLOWED_DANGEROUS_TESTS as $filename => $classname){	
+	if((!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
+		continue;
+	}
+	$tests_to_execute[] = $filename;
+}
+
+if(sizeof($tests_to_execute)==0){
+	echo "There are no test-case files to be executed\n";
+	exit(1);
+}
+
+if(sizeof($tests_to_execute)==1){
+	$result = _test_runner($tests_to_execute[0],$DIR);
+
+	if(!$result || !$result->wasSuccessful()){
+		exit(1);
+	}
+
+	exit(0);
+}
+
+
+$exit_code = 0;
+foreach($tests_to_execute as $_f){
+	$cmd = escapeshellcmd($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
+	if(isset($_SERVER["_"])){
+		// v $_SERVER["_"] je interpret PHP: /usr/bin/php
+		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
+	}
+	passthru($cmd,$_exit_code);
+	if($_exit_code!=0){
+		$exit_code = 1;
+	}
+}
+exit($exit_code);
+
+/**
+ * @return PHPUnit_Framework_TestResult
+ */
+function _test_runner($filename,$DIR){
+	$classname = preg_replace('/\.[^.]*$/',"",$filename);
+	$classname = preg_replace('/^!/',"",$classname);
+	$alt_classname = preg_replace('/_/',"",$classname);
+
+	require($filename);
+
+	// global variable $_TEST may be useful in some special cases
+	$GLOBALS["_TEST"] = array(
+		"FILENAME" => getcwd()."/$filename"
+	);
+
+	if(class_exists($alt_classname)){ $classname = $alt_classname; }
+
+	echo "--- $DIR$filename\n"; flush();
+
+	if(!class_exists($classname)){
+		echo "!!! class $classname doesn't exist\n";
+		return;
+	}
+
+	if(PHPUNIT2){
+
+		$timer  = new Benchmark_Timer;
+		$printer = new PHPUnit2_TextUI_ResultPrinter;
+
+		$suite  = new PHPUnit2_Framework_TestSuite(
+			new ReflectionClass($classname)
+		);
+
+		$timer->start();
+		$result = $suite->run();
+		$timer->stop();
+		$printer->printResult($result, $timer->timeElapsed());
+
+	}else{
+
+		$printer = new PHPUnit_TextUI_ResultPrinter;
+
+		$suite  = new PHPUnit_Framework_TestSuite(
+			new ReflectionClass($classname)
+		);
+
+		$result = $suite->run();
+		$printer->printResult($result);
+
+	}
+
+	return $result;
+}
