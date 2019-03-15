@@ -119,8 +119,13 @@ if(PHPUNIT2){
 	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
 	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
 }else{
-	eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
-	eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	if(class_exists('PHPUnit\Framework\TestCase')){
+		eval("class tc_super_base extends PHPUnit\Framework\TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit\Framework\TestCase{ }");
+	}else{
+		eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	}
 }
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
