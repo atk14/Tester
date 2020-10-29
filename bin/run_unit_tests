@@ -259,11 +259,23 @@ function _test_runner($filename,$DIR){
 
 	}else{
 
-		$printer = new PHPUnit_TextUI_ResultPrinter;
+		if(class_exists("PHPUnit\TextUI\ResultPrinter")){
+			$printer = new PHPUnit\TextUI\ResultPrinter();
+		}else{
+			// phpunit/phpunit 4.*|5.*
+			$printer = new PHPUnit_TextUI_ResultPrinter();
+		}
 
-		$suite  = new PHPUnit_Framework_TestSuite(
-			new ReflectionClass($classname)
-		);
+		if(class_exists("PHPUnit\Framework\TestSuite")){
+			$suite  = new PHPUnit\Framework\TestSuite(
+				new ReflectionClass($classname)
+			);
+		}else{
+			// phpunit/phpunit 4.*|5.*
+			$suite  = new PHPUnit_Framework_TestSuite(
+				new ReflectionClass($classname)
+			);
+		}
 
 		$result = $suite->run();
 		$printer->printResult($result);
