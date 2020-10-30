@@ -1,7 +1,13 @@
 Change Log
 ==========
 
-All notable changes to the TemplatePanel will be documented in this file.
+All notable changes to the Tester will be documented in this file.
+
+[0.3] - 2020-10-30
+------------------
+
+- Tester is working in PHP8
+- Package phpunit/phpunit is used in versions ~4.8|~5.7|~6.0
 
 [0.2] - 2020-02-14
 ------------------
