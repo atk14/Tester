@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.3.1] - 2022-04-04
+--------------------
+
+* 516574d - Global variable `$_TEST` is defined before the initialization file is being loaded
+
 [0.3] - 2020-10-30
 ------------------
 
