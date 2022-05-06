@@ -3,6 +3,12 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.4] - 2022-05-06
+------------------
+
+* d527c65 - Added methods assertStringContains and assertStringNotContains, resp. assertContains and assertNotContains if they dont exist
+* fa40058 - Dependency on phpunit/phpunit updated: "~4.8|~5.7|~6.0" -> "~4.8|~5.7|~6.0|~7.5"
+
 [0.3.1] - 2022-04-04
 --------------------
 
