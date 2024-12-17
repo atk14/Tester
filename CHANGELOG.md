@@ -3,6 +3,12 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.4.1] - 2024-12-17
+--------------------
+
+* 8622428 - Package tester is compatible with PHP>=5.6
+* 0f9d29d - Script run_unit_tests improved
+
 [0.4] - 2022-05-06
 ------------------
 
