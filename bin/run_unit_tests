@@ -158,6 +158,15 @@ if(PHPUNIT2){
 	eval("class __TcCheck extends $_base_class{ }");
 	$_tc_check = new __TcCheck("__TcCheck");
 	$_methods_def = '';
+	$_methods_def .= '
+		function setUp():void{
+			$this->_setUp();
+		}
+	';	
+	$_methods_def .= '	
+		function _setUp(){
+		}
+	';
 	if(!method_exists($_tc_check,"assertStringContains")){
 		$_methods_def .= '
 			function assertStringContains($needle, $haystack, $message = ""){
