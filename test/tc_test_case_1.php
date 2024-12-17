@@ -2,7 +2,7 @@
 class TcTestCase1 extends TcBase {
 
 	function test(){
-		$this->assertContains("test_case_1.php",$GLOBALS["_TEST"]["FILENAME"]);
-		$this->assertContains("test_case_1.php",$GLOBALS["_TEST_COPY"]["FILENAME"]);
+		$this->assertTrue((bool)strpos($GLOBALS["_TEST"]["FILENAME"],"test_case_1.php"));
+		$this->assertTrue((bool)strpos($GLOBALS["_TEST_COPY"]["FILENAME"],"test_case_1.php"));
 	}
 }
