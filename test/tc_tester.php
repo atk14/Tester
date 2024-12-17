@@ -11,10 +11,13 @@ class TcTester extends TcBase {
 
 		$this->assertNotEquals(1,2);
 
-		$this->assertContains("mother","ATK14? Holy great mother of God, it's happening!");
-		$this->assertNotContains("father","ATK14? Holy great mother of God, it's happening!");
+		// methods assertContains and assertNotContains do not work with strings anymore
+		// $this->assertContains("mother","ATK15? Holy great mother of God, it's happening!");
+		// $this->assertNotContains("father","ATK14? Holy great mother of God, it's happening!");
 
 		$this->assertStringContains("mother","ATK14? Holy great mother of God, it's happening!");
+		$this->assertStringContains("ATK14?","ATK14? Holy great mother of God, it's happening!");
 		$this->assertStringNotContains("father","ATK14? Holy great mother of God, it's happening!");
+		$this->assertStringNotContains("ATK14?!","ATK14? Holy great mother of God, it's happening!");
 	}
 }
