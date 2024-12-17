@@ -158,11 +158,19 @@ if(PHPUNIT2){
 	eval("class __TcCheck extends $_base_class{ }");
 	$_tc_check = new __TcCheck("__TcCheck");
 	$_methods_def = '';
-	$_methods_def .= '
-		function setUp():void{
-			$this->_setUp();
-		}
-	';	
+	if(PHP_VERSION_ID>=70100){
+		$_methods_def .= '
+			function setUp():void{
+				$this->_setUp();
+			}
+		';
+	}else{
+		$_methods_def .= '
+			function setUp(){
+				$this->_setUp();
+			}
+		';
+	}
 	$_methods_def .= '	
 		function _setUp(){
 		}
