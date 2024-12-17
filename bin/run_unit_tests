@@ -163,6 +163,9 @@ if(PHPUNIT2){
 			function setUp():void{
 				$this->_setUp();
 			}
+			function tearDown():void{
+				$this->_tearDown();
+			}
 		';
 	}else{
 		$_methods_def .= '
@@ -173,6 +176,8 @@ if(PHPUNIT2){
 	}
 	$_methods_def .= '	
 		function _setUp(){
+		}
+		function _tearDown(){
 		}
 	';
 	if(!method_exists($_tc_check,"assertStringContains")){
