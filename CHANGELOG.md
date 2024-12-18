@@ -3,6 +3,14 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.5] - 2024-12-18
+------------------
+
+* Tester is compatible with phpunit/phpunit in version ~4.8|~5.7|~6.0|~7.5|~8.5|~9.6
+* Added aliases for backwards compatibility with PHP<7.1
+  - `TcSuperBase::_setUp()` is alias for `TcSuperBase::setUp()`
+  - `TcSuperBase::_tearDown()` is alias for `TcSuperBase::tearDown()`
+
 [0.4.1] - 2024-12-17
 --------------------
 
