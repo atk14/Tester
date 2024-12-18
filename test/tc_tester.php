@@ -1,6 +1,12 @@
 <?php
 class TcTester extends TcBase {
 
+	var $message;
+
+	function _setUp(){
+		$this->message = "_setUp() called";
+	}
+
 	function test(){
 		$this->assertEquals(1,1);
 		$this->assertEquals(null,0);
@@ -19,5 +25,7 @@ class TcTester extends TcBase {
 		$this->assertStringContains("ATK14?","ATK14? Holy great mother of God, it's happening!");
 		$this->assertStringNotContains("father","ATK14? Holy great mother of God, it's happening!");
 		$this->assertStringNotContains("ATK14?!","ATK14? Holy great mother of God, it's happening!");
+
+		$this->assertEquals("_setUp() called",$this->message);
 	}
 }
