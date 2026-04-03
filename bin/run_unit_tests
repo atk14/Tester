@@ -44,19 +44,11 @@ if(preg_match("/^4/",phpversion())){
 	echo "Sorry! PHP4 is no more supported\n";
 	exit(1);
 }
-if(preg_match('/^5\./',phpversion())){
-	define("PHP5",true);
-	define("PHP7",false);
-	define("PHP8",false);
-}elseif(preg_match('/^7\./',phpversion())){
-	define("PHP5",false);
-	define("PHP7",true);
-	define("PHP8",false);
-}elseif(preg_match('/^8\./',phpversion())){
-	define("PHP5",false);
-	define("PHP7",false);
-	define("PHP8",true);
-}else{
+define("PHP5",PHP_VERSION_ID>=50000 && PHP_VERSION_ID<60000);
+define("PHP7",PHP_VERSION_ID>=70000 && PHP_VERSION_ID<80000);
+define("PHP8",PHP_VERSION_ID>=80000 && PHP_VERSION_ID<90000);
+
+if(!PHP5 && !PHP7 && !PHP8){
 	echo "Sorry! Your version of PHP is not supported\n";
 	exit(1);
 }
