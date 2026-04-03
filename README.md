@@ -118,6 +118,23 @@ If necessary, you can define the TcBase class.
 
 The class TcSuperBase is prepared for you by the Tester.
 
+Global variable `$_TEST`
+------------------------
+
+Before a test case loading, the global variable `$_TEST` is set. It contains filename of the currently executed test case. That might come in handy in certain situations.
+
+    <?php
+    // file: initialize.php
+    
+    if(preg_match('/_theme_dark.php/',$_TEST["FILENAME"])){
+      define("COLOR_BACKGROUND","#000000");
+      define("COLOR_TEXT","#999999");
+    }else{
+      define("COLOR_BACKGROUND","#FFFFFF");
+      define("COLOR_TEXT","#333333");
+    }
+
+
 Dangerous tests
 ---------------
 Sometimes you don't want to execute some test files automatically unless you specify them on command line.
