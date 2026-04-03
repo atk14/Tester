@@ -1,30 +1,32 @@
 Tester
 ======
 
+Tester is a PHPUnit loader that abstracts PHPUnit's API changes across different PHP versions. This means you can use the same test suites for different PHP versions in your project. In fact, Tester makes it much easier to port your project to a new PHP version.
+
 Statements:
 - Testing should be easy as heck!
-- Testing should be durable!
+- Source code of test cases should be durable. No one wants to rewrite the tests for the new version of PHPUnit.
 
-A test runner. Part of ATK14 Framework <http://www.atk14.net/>
 
-Checking that all required dependencies are met:
+Installation
+------------
+
+Installation only for a specific project.
+
+    composer require --dev atk14/tester
+
+Global instalation.
+
+    composer global require atk14/tester
+
+In case of global instalation, it is convenient to have path `$HOME/.config/composer/vendor/bin/` in the `$PATH` environment variable.
+
+Checking that all required dependencies are met.
 
     $ run_unit_tests --check-dependencies && echo "ok"
     # or
     $ run_unit_tests -c && echo "ok"
 
-In working directory it searches for `tc_*.php` files. Every of them loads and runs tests.
-
-    $ run_unit_tests
-
-In file e.g. tc_currency.php it expects TcCurrency class (eventually tc_currency).
-
-You can specify a list of test files to be executed
-
-    $ run_unit_tests tc_account tc_bank_transfer
-
-    eventually with .php suffix
-    $ run_unit_tests tc_account.php tc_bank_transfer.php
 
 Basic usage
 -----------
@@ -48,6 +50,8 @@ Place here first test case file tc_first_test_case.php in here:
         $this->assertEquals(9,3*3);
       }
     }
+
+It doesn't matter that the TcBase class isn't defined. The tester will create it if necessary.
 
 Run tests from the first test case file:
 
@@ -86,12 +90,33 @@ Run tests from both test case files:
 
     OK (1 test, 0 assertions)
 
+You can run selected test cases by entering them at the command line.
+
+    $ run_unit_tests tc_first_test_case
+    $ run_unit_tests tc_first_test_case tc_strings
+
 Usually, it is necessary to load and initialize something before running tests. The file initialize.php, if exists, is loaded automatically.
 
     <?php
     // file: test/initialize.php
     require_once(__DIR__ . "/../src/lib/our_magical_library.php");
 
+If necessary, you can define the TcBase class.
+
+    <?php
+    // file: test/tc_base.php
+    class TcBase extends TcSuperBase {
+
+      function _setUp(){
+        // something that should be done before every test
+      }
+
+      function _tearDown(){
+        // something that should be done after every test
+      }
+    }
+
+The class TcSuperBase is prepared for you by the Tester.
 
 Dangerous tests
 ---------------
@@ -105,7 +130,10 @@ Prefix such files with exclamation mark.
 
 Automatization in testing
 -------------------------
-
-  $ cd /path/to/test_files/ && run_unit_tests && echo "TESTS ARE OK" || echo "THERE WERE ERRORS"
+    
+    cd test && \
+    ../vendor/bin/run_unit_tests && \
+    echo "TESTS ARE OK" && exit 0 || \
+    echo "THERE WERE ERRORS" && exit 1
 
 [//]: # ( vim: set ts=2 et: )
