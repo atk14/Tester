@@ -102,17 +102,17 @@ foreach($_phpunit_path_ar as $dir => $autoload){
 }
 
 $error_message = ltrim('
-********************************************************************************
-*  Missing dependency: PHPUnit or PHPUnit2                                     *
-*  The following command may help you:                                         *
-*                                                                              *
-*  $ composer global require "phpunit/phpunit=~4.8|~5.7|~6.0|~7.5|~8.5|~9.6"   *
-*                                                                              *
-*  or for the installation of the very old PHPUnit2 execute:                   *
-*                                                                              *
-*  $ sudo pear install --alldeps PHPUnit2                                      *
-*                                                                              *
-********************************************************************************
+********************************************************************************************
+*  Missing dependency: PHPUnit or PHPUnit2                                                 *
+*  The following command may help you:                                                     *
+*                                                                                          *
+*  $ composer global require "phpunit/phpunit=~4.8|~5.7|~6.0|~7.5|~8.5|~9.6|~10.0|~11.0"   *
+*                                                                                          *
+*  or for the installation of the very old PHPUnit2 execute:                               *
+*                                                                                          *
+*  $ sudo pear install --alldeps PHPUnit2                                                  *
+*                                                                                          *
+********************************************************************************************
 ');
 
 if($exists) {
@@ -139,8 +139,7 @@ if($exists) {
 	}
 }
 
-define('PHPUNIT10', class_exists('PHPUnit\Runner\Version') && version_compare(\PHPUnit\Runner\Version::id(), '10.0.0', '>=') && version_compare(\PHPUnit\Runner\Version::id(), '11.0.0', '<'));
-define('PHPUNIT11', class_exists('PHPUnit\Runner\Version') && version_compare(\PHPUnit\Runner\Version::id(), '11.0.0', '>=') && version_compare(\PHPUnit\Runner\Version::id(), '12.0.0', '<'));
+define('PHPUNIT10PLUS', class_exists('PHPUnit\Runner\Version') && version_compare(\PHPUnit\Runner\Version::id(), '10.0.0', '>='));
 
 if(isset($arguments["c"]) || isset($arguments["check-dependencies"])){
 	exit(0);
@@ -322,7 +321,7 @@ function _test_runner($filename,$DIR){
 
 	}
 	
-	if(PHPUNIT10 || PHPUNIT11){
+	if(PHPUNIT10PLUS){
 
 		\PHPUnit\Event\Facade::emitter()->applicationStarted();
 
@@ -375,12 +374,6 @@ function _test_runner($filename,$DIR){
 	}
 
 	if(class_exists('PHPUnit\Framework\TestSuite')){
-		/*
-		// TODO: PHPUnit 10, 11
-		$suite = PHPUnit\Framework\TestSuite::fromClassReflector(
-			new ReflectionClass($classname)
-		);
-		*/
 		$suite  = new PHPUnit\Framework\TestSuite(
 			new ReflectionClass($classname)
 		);
