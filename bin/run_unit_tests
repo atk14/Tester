@@ -316,56 +316,52 @@ function _test_runner($filename,$DIR){
 		$timer->start();
 		$result = $suite->run();
 		$timer->stop();
-    $printer->printResult($result, $timer->timeElapsed());
+		$printer->printResult($result, $timer->timeElapsed());
 
-    return $result;
+		return $result;
 
-  }
-  
-  if(PHPUNIT10 || PHPUNIT11){
+	}
+	
+	if(PHPUNIT10 || PHPUNIT11){
 
-    // $result = (function() use($filename,$classname){
+		\PHPUnit\Event\Facade::emitter()->applicationStarted();
 
-    \PHPUnit\Event\Facade::emitter()->applicationStarted();
+		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build(['phpunit', $filename]);
 
-    $configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build(['phpunit', $filename]);
+		$printer = \PHPUnit\TextUI\Output\Facade::init($configuration, false, false);
 
-    $printer = \PHPUnit\TextUI\Output\Facade::init($configuration, false, false);
+		\PHPUnit\TestRunner\TestResult\Facade::init();
 
-    \PHPUnit\TestRunner\TestResult\Facade::init();
+		// DeprecationCollector is not in PHPUnit 10
+		if(class_exists("\PHPUnit\Runner\DeprecationCollector\Facade")){
+			\PHPUnit\Runner\DeprecationCollector\Facade::init();
+		}
 
-    // DeprecationCollector is not in PHPUnit 10
-    if(class_exists("\PHPUnit\Runner\DeprecationCollector\Facade")){
-      \PHPUnit\Runner\DeprecationCollector\Facade::init();
-    }
+		\PHPUnit\Event\Facade::instance()->seal();
 
-    \PHPUnit\Event\Facade::instance()->seal();
+		$testSuite = \PHPUnit\Framework\TestSuite::fromClassReflector(new \ReflectionClass($classname));
 
-    $testSuite = \PHPUnit\Framework\TestSuite::fromClassReflector(new \ReflectionClass($classname));
+		\PHPUnit\Runner\CodeCoverage::instance()->init($configuration, \PHPUnit\TextUI\Configuration\CodeCoverageFilterRegistry::instance(), false);
 
-    \PHPUnit\Runner\CodeCoverage::instance()->init($configuration, \PHPUnit\TextUI\Configuration\CodeCoverageFilterRegistry::instance(), false);
+		$timer = new \SebastianBergmann\Timer\Timer;
+		$timer->start();
 
-    $timer = new \SebastianBergmann\Timer\Timer;
-    $timer->start();
+		(new \PHPUnit\TextUI\TestRunner)->run($configuration, new \PHPUnit\Runner\ResultCache\NullResultCache, $testSuite);
 
-    (new \PHPUnit\TextUI\TestRunner)->run($configuration, new \PHPUnit\Runner\ResultCache\NullResultCache, $testSuite);
+		$duration = $timer->stop();
 
-    $duration = $timer->stop();
+		$result = \PHPUnit\TestRunner\TestResult\Facade::result();
 
-    $result = \PHPUnit\TestRunner\TestResult\Facade::result();
+		\PHPUnit\TextUI\Output\Facade::printResult($result, null, $duration, false);
 
-    \PHPUnit\TextUI\Output\Facade::printResult($result, null, $duration, false);
+		$exitCode = (new \PHPUnit\TextUI\ShellExitCodeCalculator)->calculate($configuration, $result);
 
-    $exitCode = (new \PHPUnit\TextUI\ShellExitCodeCalculator)->calculate($configuration, $result);
+		\PHPUnit\Event\Facade::emitter()->applicationFinished($exitCode);
 
-    \PHPUnit\Event\Facade::emitter()->applicationFinished($exitCode);
-
-    $wasSuccessful = ($exitCode === 0);
+		$wasSuccessful = ($exitCode === 0);
 		$result = new _RunUnitTest_Result($wasSuccessful);
 
 		return $result;
-    //})();
-    //return $result;
 
 	}
 
@@ -397,14 +393,14 @@ function _test_runner($filename,$DIR){
 
 	$result = $suite->run();
 
-  $printer->printResult($result);
+	$printer->printResult($result);
 
-  return $result;
+	return $result;
 
 }
 
 class _RunUnitTest_Result {
 	private $ok;
-  public function __construct($ok){ $this->ok = $ok; }
-  public function wasSuccessful(){ return $this->ok; }
+	public function __construct($ok){ $this->ok = $ok; }
+	public function wasSuccessful(){ return $this->ok; }
 }
