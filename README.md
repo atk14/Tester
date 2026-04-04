@@ -9,7 +9,7 @@ Statements:
 
 Supported versions:
 - PHP 5.6, 7.x, 8.x
-- PHPUnit ~4.8 | ~5.7 | ~6.0 | ~7.5 | ~8.5 | ~9.6
+- PHPUnit ~4.8 | ~5.7 | ~6.0 | ~7.5 | ~8.5 | ~9.6 | ~10.0 | ~11.0
 
 
 Installation
