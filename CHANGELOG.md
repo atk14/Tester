@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6] - 2026-04-04
+------------------
+
+* Compatibility with PHPUnit 10.* and 11.* has been added
+
 [0.5] - 2024-12-18
 ------------------
 
