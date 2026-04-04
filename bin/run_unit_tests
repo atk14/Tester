@@ -76,6 +76,7 @@ if($DIR){
 
 $exists = false;
 $_phpunit_path_ar = array();
+$_phpunit_path_ar["vendor/phpunit"] = "../autoload.php";
 $_phpunit_path_ar["../vendor/phpunit"] = "../autoload.php";
 $_phpunit_path_ar["../../vendor/phpunit"] = "../autoload.php";
 $_phpunit_path_ar["../../../vendor/phpunit"] = "../autoload.php";
@@ -137,6 +138,9 @@ if($exists) {
 		exit(1);
 	}
 }
+
+define('PHPUNIT10', class_exists('PHPUnit\Runner\Version') && version_compare(\PHPUnit\Runner\Version::id(), '10.0.0', '>=') && version_compare(\PHPUnit\Runner\Version::id(), '11.0.0', '<'));
+define('PHPUNIT11', class_exists('PHPUnit\Runner\Version') && version_compare(\PHPUnit\Runner\Version::id(), '11.0.0', '>=') && version_compare(\PHPUnit\Runner\Version::id(), '12.0.0', '<'));
 
 if(isset($arguments["c"]) || isset($arguments["check-dependencies"])){
 	exit(0);
@@ -312,47 +316,95 @@ function _test_runner($filename,$DIR){
 		$timer->start();
 		$result = $suite->run();
 		$timer->stop();
-		$printer->printResult($result, $timer->timeElapsed());
+    $printer->printResult($result, $timer->timeElapsed());
 
-	}else{
+    return $result;
 
-		/*
-		// TODO: PHPUnit 10, 11
-		if(class_exists('PHPUnit\TextUI\Output\DefaultPrinter')){
-			$printer = PHPUnit\TextUI\Output\DefaultPrinter::standardOutput();
-		}
-		*/
-		if(class_exists('PHPUnit\TextUI\DefaultResultPrinter')){
-			$printer = new PHPUnit\TextUI\DefaultResultPrinter();
-		}elseif(class_exists('PHPUnit\TextUI\ResultPrinter')){
-			$printer = new PHPUnit\TextUI\ResultPrinter();
-		}else{
-			// phpunit/phpunit 4.*|5.*
-			$printer = new PHPUnit_TextUI_ResultPrinter();
-		}
+  }
+  
+  if(PHPUNIT10 || PHPUNIT11){
 
-		if(class_exists('PHPUnit\Framework\TestSuite')){
-			/*
-			// TODO: PHPUnit 10, 11
-			$suite = PHPUnit\Framework\TestSuite::fromClassReflector(
-				new ReflectionClass($classname)
-			);
-			*/
-			$suite  = new PHPUnit\Framework\TestSuite(
-				new ReflectionClass($classname)
-			);
-		}else{
-			// phpunit/phpunit 4.*|5.*
-			$suite  = new PHPUnit_Framework_TestSuite(
-				new ReflectionClass($classname)
-			);
-		}
+    // $result = (function() use($filename,$classname){
 
-		$result = $suite->run();
+    \PHPUnit\Event\Facade::emitter()->applicationStarted();
 
-		$printer->printResult($result);
+    $configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build(['phpunit', $filename]);
+
+    $printer = \PHPUnit\TextUI\Output\Facade::init($configuration, false, false);
+
+    \PHPUnit\TestRunner\TestResult\Facade::init();
+
+    // DeprecationCollector is not in PHPUnit 10
+    if(class_exists("\PHPUnit\Runner\DeprecationCollector\Facade")){
+      \PHPUnit\Runner\DeprecationCollector\Facade::init();
+    }
+
+    \PHPUnit\Event\Facade::instance()->seal();
+
+    $testSuite = \PHPUnit\Framework\TestSuite::fromClassReflector(new \ReflectionClass($classname));
+
+    \PHPUnit\Runner\CodeCoverage::instance()->init($configuration, \PHPUnit\TextUI\Configuration\CodeCoverageFilterRegistry::instance(), false);
+
+    $timer = new \SebastianBergmann\Timer\Timer;
+    $timer->start();
+
+    (new \PHPUnit\TextUI\TestRunner)->run($configuration, new \PHPUnit\Runner\ResultCache\NullResultCache, $testSuite);
+
+    $duration = $timer->stop();
+
+    $result = \PHPUnit\TestRunner\TestResult\Facade::result();
+
+    \PHPUnit\TextUI\Output\Facade::printResult($result, null, $duration, false);
+
+    $exitCode = (new \PHPUnit\TextUI\ShellExitCodeCalculator)->calculate($configuration, $result);
+
+    \PHPUnit\Event\Facade::emitter()->applicationFinished($exitCode);
+
+    $wasSuccessful = ($exitCode === 0);
+		$result = new _RunUnitTest_Result($wasSuccessful);
+
+		return $result;
+    //})();
+    //return $result;
 
 	}
 
-	return $result;
+	if(class_exists('PHPUnit\TextUI\DefaultResultPrinter')){
+		$printer = new PHPUnit\TextUI\DefaultResultPrinter();
+	}elseif(class_exists('PHPUnit\TextUI\ResultPrinter')){
+		$printer = new PHPUnit\TextUI\ResultPrinter();
+	}else{
+		// phpunit/phpunit 4.*|5.*
+		$printer = new PHPUnit_TextUI_ResultPrinter();
+	}
+
+	if(class_exists('PHPUnit\Framework\TestSuite')){
+		/*
+		// TODO: PHPUnit 10, 11
+		$suite = PHPUnit\Framework\TestSuite::fromClassReflector(
+			new ReflectionClass($classname)
+		);
+		*/
+		$suite  = new PHPUnit\Framework\TestSuite(
+			new ReflectionClass($classname)
+		);
+	}else{
+		// phpunit/phpunit 4.*|5.*
+		$suite  = new PHPUnit_Framework_TestSuite(
+			new ReflectionClass($classname)
+		);
+	}
+
+	$result = $suite->run();
+
+  $printer->printResult($result);
+
+  return $result;
+
+}
+
+class _RunUnitTest_Result {
+	private $ok;
+  public function __construct($ok){ $this->ok = $ok; }
+  public function wasSuccessful(){ return $this->ok; }
 }

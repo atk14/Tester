@@ -1,7 +1,7 @@
 {
         "name": "atk14/tester",
         "type": "library",
-        "description": "Easier way to run unit tests written in PHPUnit",
+        "description": "PHPUnit wrapper that lets you run the same test suites across multiple PHPUnit and PHP versions without rewriting your tests",
         "keywords": ["unit test","unit tests","run_unit_tests","atk14"],
         "homepage": "https://github.com/atk14/Tester",
         "license": ["MIT"],
@@ -13,7 +13,7 @@
         ],
         "require": {
                 "php": ">=5.6",
-                "phpunit/phpunit": "~4.8|~5.7|~6.0|~7.5|~8.5|~9.6"
+                "phpunit/phpunit": "~4.8|~5.7|~6.0|~7.5|~8.5|~9.6|~10.0|~11.0"
         },
         "require-dev": {
         },
