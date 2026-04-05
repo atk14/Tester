@@ -186,10 +186,10 @@ if(PHPUNIT2){
 	if(!method_exists($_tc_check,"assertStringContains")){
 		$_methods_def .= '
 			function assertStringContains($needle, $haystack, $message = ""){
-				return $this->assertTrue(is_int(strpos($haystack, $needle)), $message);
+				return $this->assertTrue(strpos($haystack, $needle) !== false, $message);
 			}
 			function assertStringNotContains($needle, $haystack, $message = ""){
-				return $this->assertTrue(is_bool(strpos($haystack, $needle)), $message);
+				return $this->assertTrue(strpos($haystack, $needle) === false, $message);
 			}
 		';
 	}
