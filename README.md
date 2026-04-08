@@ -42,18 +42,20 @@ In the project directory, create a `test` directory:
 
 Place a test case file `tc_first_test_case.php` in there:
 
-    <?php
-    // file: test/tc_first_test_case.php
-    class TcFirstTestCase extends TcBase {
+```php
+<?php
+// file: test/tc_first_test_case.php
+class TcFirstTestCase extends TcBase {
 
-      function test_sum(){
-        $this->assertEquals(6, 3 + 3);
-      }
+  function test_sum(){
+    $this->assertEquals(6, 3 + 3);
+  }
 
-      function test_multiplication(){
-        $this->assertEquals(9, 3 * 3);
-      }
-    }
+  function test_multiplication(){
+    $this->assertEquals(9, 3 * 3);
+  }
+}
+```
 
 The `TcBase` class doesn't need to be defined — Tester creates it automatically if the file `tc_base.php` is absent.
 
@@ -82,9 +84,11 @@ Initialization
 
 Usually it is necessary to load and initialize something before running tests. The file `initialize.php`, if it exists in the test directory, is loaded automatically before each test case.
 
-    <?php
-    // file: test/initialize.php
-    require_once(__DIR__ . "/../vendor/autoload.php");
+```php
+<?php
+// file: test/initialize.php
+require_once(__DIR__ . "/../vendor/autoload.php");
+```
 
 
 TcBase and TcSuperBase
@@ -94,18 +98,20 @@ Tester provides the `TcSuperBase` class (and its alias `tc_super_base`), which e
 
 Your test cases should extend `TcBase`. If you don't create a `tc_base.php` file, Tester creates a plain `TcBase` that simply extends `TcSuperBase`. When you need shared setup, teardown, or helper methods across all your test cases, define `TcBase` yourself:
 
-    <?php
-    // file: test/tc_base.php
-    class TcBase extends TcSuperBase {
+```php
+<?php
+// file: test/tc_base.php
+class TcBase extends TcSuperBase {
 
-      function _setUp(){
-        // runs before each test method
-      }
+  function _setUp(){
+    // runs before each test method
+  }
 
-      function _tearDown(){
-        // runs after each test method
-      }
-    }
+  function _tearDown(){
+    // runs after each test method
+  }
+}
+```
 
 Note that Tester uses `_setUp()` and `_tearDown()` instead of PHPUnit's `setUp()` and `tearDown()`. This is intentional — it avoids conflicts with PHPUnit's internal lifecycle and works consistently across all supported PHPUnit versions.
 
@@ -128,16 +134,18 @@ Global variable `$_TEST`
 
 Before each test case file is loaded, the global variable `$_TEST` is set. It contains the full path to the currently executed test case file, which can be useful in `initialize.php`:
 
-    <?php
-    // file: test/initialize.php
+```php
+<?php
+// file: test/initialize.php
 
-    if(preg_match('/_theme_dark\.php$/', $_TEST["FILENAME"])){
-      define("COLOR_BACKGROUND", "#000000");
-      define("COLOR_TEXT",       "#999999");
-    } else {
-      define("COLOR_BACKGROUND", "#FFFFFF");
-      define("COLOR_TEXT",       "#333333");
-    }
+if(preg_match('/_theme_dark\.php$/', $_TEST["FILENAME"])){
+  define("COLOR_BACKGROUND", "#000000");
+  define("COLOR_TEXT",       "#999999");
+} else {
+  define("COLOR_BACKGROUND", "#FFFFFF");
+  define("COLOR_TEXT",       "#333333");
+}
+```
 
 
 Dangerous tests
