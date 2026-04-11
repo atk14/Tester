@@ -272,7 +272,11 @@ if(sizeof($tests_to_execute)==1){
 
 	$result = _test_runner($tests_to_execute[0],$DIR);
 
-	exit; // the shutdown function returns the correct exit code
+	if(!$result || !$result->wasSuccessful()){
+		exit(1);
+	}
+
+	exit(0);
 }
 
 
