@@ -3,6 +3,12 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.1] - 2026-04-11
+--------------------
+
+* 5949493 - Displaying warnings in PHPUnit >= 10.3.0
+* 156e8c7 - Handling the situation where `exit` function is called within a test case class
+
 [0.6] - 2026-04-04
 ------------------
 
