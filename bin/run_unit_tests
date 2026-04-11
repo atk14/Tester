@@ -260,13 +260,19 @@ if(sizeof($tests_to_execute)==1){
 		eval("class TcBase extends TcSuperBase{ }");
 	}
 
+	$result = null;
+
+	register_shutdown_function(function() use(&$result){
+		if(!$result || !$result->wasSuccessful()){
+			exit(1);
+		}
+
+		exit(0);
+	});
+
 	$result = _test_runner($tests_to_execute[0],$DIR);
 
-	if(!$result || !$result->wasSuccessful()){
-		exit(1);
-	}
-
-	exit(0);
+	exit; // the shutdown function returns the correct exit code
 }
 
 
