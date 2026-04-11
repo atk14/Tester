@@ -260,17 +260,27 @@ if(sizeof($tests_to_execute)==1){
 		eval("class TcBase extends TcSuperBase{ }");
 	}
 
-	$result = null;
+	function __result_holder($result = null){
+		static $res ;
+		if(!is_null($result)){
+			$res = $result;
+		}
+		return $res;
+	};
 
-	register_shutdown_function(function() use(&$result){
+	function __shutdown_function(){
+		$result = __result_holder();
 		if(!$result || !$result->wasSuccessful()){
 			exit(1);
 		}
 
 		exit(0);
-	});
+	}
+
+	register_shutdown_function("__shutdown_function");
 
 	$result = _test_runner($tests_to_execute[0],$DIR);
+	__result_holder($result);
 
 	if(!$result || !$result->wasSuccessful()){
 		exit(1);
