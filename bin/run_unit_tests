@@ -345,7 +345,13 @@ function _test_runner($filename,$DIR){
 
 		\PHPUnit\Event\Facade::emitter()->applicationStarted();
 
-		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build(['phpunit', $filename]);
+		$_args = ['phpunit'];
+		// --display-warnings was introduced in PHPUnit 10.3
+		if(version_compare(\PHPUnit\Runner\Version::id(), '10.3.0', '>=')){
+			$_args[] = '--display-warnings';
+		}
+		$_args[] = $filename;
+		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build($_args);
 
 		$printer = \PHPUnit\TextUI\Output\Facade::init($configuration, false, false);
 
