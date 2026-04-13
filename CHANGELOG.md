@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.2] - 2026-04-13
+--------------------
+
+* e938a96 - Got rid of the error message: "No composer.json in current directory..."
+
 [0.6.1] - 2026-04-11
 --------------------
 
