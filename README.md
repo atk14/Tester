@@ -1,6 +1,8 @@
 Tester
 ======
 
+[![Tests](https://github.com/atk14/Tester/actions/workflows/tests.yml/badge.svg)](https://github.com/atk14/Tester/actions/workflows/tests.yml)
+
 Tester is a PHPUnit wrapper that abstracts PHPUnit's API changes across different PHP and PHPUnit versions. This means you can use the same test suites regardless of which PHPUnit version is installed. Tester makes it much easier to keep your tests working as you upgrade PHP or PHPUnit.
 
 Statements:
