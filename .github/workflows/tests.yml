@@ -41,6 +41,6 @@ jobs:
         run: composer update
 
       - name: Run tests
-        run: cd test && ../vendor/bin/run_unit_tests
+        run: cd test && ../bin/run_unit_tests
 
 # vim:ts=2:sw=2:et
