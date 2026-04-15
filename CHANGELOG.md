@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.3] - 2026-04-15
+--------------------
+
+* 01e7a10 - Displaying deprecations in PHPUnit >= 10.3.0
+
 [0.6.2] - 2026-04-13
 --------------------
 
