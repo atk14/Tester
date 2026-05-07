@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.4] - 2026-05-07
+--------------------
+
+* fc3343a - The parameter passed can be a test case file, including its directory
+
 [0.6.3] - 2026-04-15
 --------------------
 
