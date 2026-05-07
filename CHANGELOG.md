@@ -6,7 +6,7 @@ All notable changes to the Tester will be documented in this file.
 [0.6.4] - 2026-05-07
 --------------------
 
-* fc3343a - The parameter passed can be a test case file, including its directory
+* fc3343a - The parameter passed can be a test case file, including its directory; e.g. run_unit_tests test/tc_stringer.php
 
 [0.6.3] - 2026-04-15
 --------------------
