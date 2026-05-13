@@ -85,13 +85,14 @@ if($DIR){
 
 $exists = false;
 $_phpunit_path_ar = array();
-$_phpunit_path_ar["vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../../vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../../../vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
-$_phpunit_path_ar["../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
-$_phpunit_path_ar["../../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
+$_scan_dir = getcwd();
+do {
+	$_phpunit_path_ar["$_scan_dir/vendor/phpunit"] = "../autoload.php";
+	$_parent = dirname($_scan_dir);
+	if($_parent === $_scan_dir){ break; } // reached filesystem root
+	$_scan_dir = $_parent;
+} while(true);
+unset($_scan_dir, $_parent);
 if(
 	exec("which composer") &&
 	($_global_path = exec("composer global -q config home 2>/dev/null"))
