@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.5] - 2026-05-13
+--------------------
+
+* Refactoring
+
 [0.6.4] - 2026-05-07
 --------------------
 
