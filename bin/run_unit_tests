@@ -235,7 +235,7 @@ closedir($dir);
 ksort($ALLOWED_TESTS);
 
 foreach($ALLOWED_TESTS as $filename => $classname){	
-	if(sizeof($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
+	if(count($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
 		continue;
 	}
 	$tests_to_execute[] = $filename;
