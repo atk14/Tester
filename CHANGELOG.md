@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.6] - 2026-10-02
+--------------------
+
+* d8bd508 - Fix assertion count showing 0 with PHPUnit 9
+
 [0.6.5] - 2026-05-13
 --------------------
 
