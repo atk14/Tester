@@ -80,6 +80,12 @@ Or point `run_unit_tests` at a subdirectory:
 
     $ run_unit_tests path/to/test/
 
+You can combine several directories and test files in a single invocation:
+
+    $ run_unit_tests dir1/ dir2/ tc_strings
+
+A bare test name (without a `/`) always refers to a test in the current working directory, regardless of which directories were named earlier on the command line.
+
 
 Initialization
 --------------
