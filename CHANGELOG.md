@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to the Tester will be documented in this file.
 
+[0.6.7] - 2026-10-14
+--------------------
+
+* a6dfe5e - Support running tests from multiple directories in one invocation
+
 [0.6.6] - 2026-10-02
 --------------------
 
