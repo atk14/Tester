@@ -10,7 +10,7 @@ class TcMultipleDirs extends TcBase {
 		$this->assertEquals(0,$result_code);
 
 		$tests = array_filter($output,function($l){ return !!preg_match('/^--- /',$l); });
-		$tests = array_map(function($l){ return preg_replace('/^--- /','',$l); },$tests,);
+		$tests = array_map(function($l){ return preg_replace('/^--- /','',$l); },$tests);
 		$tests = array_values($tests);
 
 		$this->assertEquals([
